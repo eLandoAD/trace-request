@@ -27,23 +27,29 @@ builder.Services.AddHttpLogging(logging =>
     logging.RequestHeaders.Add(TRACE_IDENTIFIER_KEY);
 });
 ```
-### 4. Use Trace Identifier Middleware
+
+### 4. Add configuration property for header name into appsettings.json
+```json
+"TraceIdKey": "YOUR-CUSTOM-HEADER-NAME",
+```
+
+### 5. Use Trace Identifier Middleware
 Add the TraceIdentifierMiddleware as the first middleware in your application to include a new trace header with a unique GUID:
 
 ```csharp 
 app.UseMiddleware<TraceIdentifierMiddleware>();
 ```
-### 5. Use HTTP Logging Middleware
+### 6. Use HTTP Logging Middleware
 Use UseHttpLogging() as the second middleware in your application to log the HTTP requests and responses:
 
 ```csharp
 app.UseHttpLogging();
 ```
 
-### 6. Additional Configuration
+### 7. Additional Configuration
 If you need to trace:
 
-## 6.1. gRPC Calls
+#### 7.1. gRPC Calls
 Add the TraceIdentifierInterceptor to your services:
 
 ```csharp
@@ -53,9 +59,9 @@ services.AddSingleton<TraceIdentifierInterceptor>();
 Configure each gRPC client with the TraceIdentifierInterceptor:
 ```csharp
 services.AddGrpcClient<gRPCClient>(options => ...)
-        .AddInterceptor(new TraceIdentifierInterceptor(IHttpContextAccessor, TRACE_IDENTIFIER_KEY));
+        .AddInterceptor<TraceIdentifierInterceptor>();
 ```
 
-## 6.2. HTTP Requests
+#### 7.2. HTTP Requests
 Note that HTTP requests are not implemented yet and require further development.
   

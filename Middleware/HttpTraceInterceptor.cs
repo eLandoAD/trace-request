@@ -3,6 +3,7 @@ using elando.ELK.TraceLogging.Extensions;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 #endregion
 
 namespace elando.ELK.TraceLogging.Middleware
@@ -30,10 +31,10 @@ namespace elando.ELK.TraceLogging.Middleware
         /// </summary>
         /// <param name="contextAccessor"></param>
         /// <param name="traceHeaderName"></param>
-        public HttpTraceInterceptor(IHttpContextAccessor contextAccessor, string traceHeaderName)
+        public HttpTraceInterceptor(IHttpContextAccessor contextAccessor, IConfiguration configuration)
         {
             _httpContextAccessor = contextAccessor;
-            _traceHeaderName = traceHeaderName;
+            _traceHeaderName = configuration.GetHeaderName();
         }
         #endregion
 
