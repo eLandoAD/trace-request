@@ -1,5 +1,5 @@
 ﻿#region Usings
-using elando.ELK.TraceLogging.Externsions;
+using elando.ELK.TraceLogging.Extensions;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.AspNetCore.Http;

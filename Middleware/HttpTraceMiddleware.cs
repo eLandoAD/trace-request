@@ -1,5 +1,5 @@
 ﻿#region Usings
-using elando.ELK.TraceLogging.Externsions;
+using elando.ELK.TraceLogging.Extensions;
 using Microsoft.AspNetCore.Http;
 #endregion
 
