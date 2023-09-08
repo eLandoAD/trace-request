@@ -24,7 +24,7 @@ Configure HTTP request/response logging using the following code:
 ```csharp 
 builder.Services.AddHttpLogging(logging =>
 {
-    logging.RequestHeaders.Add(TRACE_IDENTIFIER_KEY);
+    logging.RequestHeaders.Add(builder.Configuration.GetHeaderName());
 });
 ```
 
