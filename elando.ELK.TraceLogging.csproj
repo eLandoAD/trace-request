@@ -8,6 +8,7 @@
 		<Description>Trace logging in to microservices with custom Http Header</Description>
 		<Copyright>own license</Copyright>
 		<PackageTags>Logging Trace</PackageTags>
+		<Version>1.0.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup> 
