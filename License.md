@@ -1,4 +1,4 @@
-﻿  This file is part of *ELK.TraceLogging*.
+﻿ This file is part of *ELK.TraceLogging*.
  Copyright (C) *2023* *eLnado*
 
  *ELK.TraceLogging* is free software: you can redistribute it and/or modify
