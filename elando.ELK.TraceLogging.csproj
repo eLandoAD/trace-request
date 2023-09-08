@@ -9,6 +9,8 @@
 		<Copyright>own license</Copyright>
 		<PackageTags>Logging Trace</PackageTags>
 		<Version>1.0.0</Version>
+		<PackageLicenseFile>License.md</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup> 
@@ -17,6 +19,13 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" /> 
 		<PackageReference Include="Serilog" Version="3.0.1" />
 		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 
