@@ -2,7 +2,7 @@
 
 This package provides an easy configuration to trace HTTP requests using Serilog. Please follow the steps below to set it up.
 
-## Configuration Steps
+# Configuration Steps 
 
 ### 1. Configure Serilog for Elasticsearch
 
@@ -33,11 +33,12 @@ builder.Services.AddHttpLogging(logging =>
 "TraceIdKey": "YOUR-CUSTOM-HEADER-NAME",
 ```
 
-### 5. Use Trace Identifier Middleware
+### 5. Use Trace Identifier Middleware 
+Not needed for application inside the kube8.
 Add the TraceIdentifierMiddleware as the first middleware in your application to include a new trace header with a unique GUID:
 
 ```csharp 
-app.UseMiddleware<TraceIdentifierMiddleware>();
+app.UseMiddleware<HttpTraceMiddleware>();
 ```
 ### 6. Use HTTP Logging Middleware
 Use UseHttpLogging() as the second middleware in your application to log the HTTP requests and responses:
@@ -47,6 +48,7 @@ app.UseHttpLogging();
 ```
 
 ### 7. Additional Configuration
+Not needed for application inside the kube8.
 If you need to trace:
 
 #### 7.1. gRPC Calls
@@ -64,4 +66,4 @@ services.AddGrpcClient<gRPCClient>(options => ...)
 
 #### 7.2. HTTP Requests
 Note that HTTP requests are not implemented yet and require further development.
-  
+ 
