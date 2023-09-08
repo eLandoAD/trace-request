@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;  
 
-namespace elando.ELK.TraceLogging.Externsions
+namespace elando.ELK.TraceLogging.Extensions
 {
     public static class ApplicationBuilderServiceExtensions
     {

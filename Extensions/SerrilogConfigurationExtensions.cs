@@ -3,7 +3,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;
 
-namespace elando.ELK.TraceLogging.Externsions
+namespace elando.ELK.TraceLogging.Extensions
 {
     public static class SerrilogConfigurationExtensions
     {

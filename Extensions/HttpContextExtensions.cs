@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace elando.ELK.TraceLogging.Externsions
+namespace elando.ELK.TraceLogging.Extensions
 {
     public static class HttpContextExtensions
     {
