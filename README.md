@@ -55,13 +55,13 @@ If you need to trace:
 Add the TraceIdentifierInterceptor to your services:
 
 ```csharp
-services.AddSingleton<TraceIdentifierInterceptor>();
+services.AddSingleton<HttpTraceInterceptor>();
 ```
 
 Configure each gRPC client with the TraceIdentifierInterceptor:
 ```csharp
 services.AddGrpcClient<gRPCClient>(options => ...)
-        .AddInterceptor<TraceIdentifierInterceptor>();
+        .AddInterceptor<HttpTraceInterceptor>();
 ```
 
 #### 7.2. HTTP Requests
