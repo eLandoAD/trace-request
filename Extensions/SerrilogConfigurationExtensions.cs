@@ -22,7 +22,7 @@ namespace elando.ELK.TraceLogging.Extensions
             {
                 AutoRegisterTemplate = true,
                 AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
-                IndexFormat = $"{indexPrefix}-{DateTime.UtcNow:yyyy-MM-dd-HH}",
+                IndexFormat = $"{indexPrefix}",
                 LevelSwitch = new LoggingLevelSwitch(minLoggingLevel),
             });
 
