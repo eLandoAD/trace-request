@@ -13,5 +13,15 @@ namespace elando.ELK.TraceLogging.Extensions
             }
             return "X-Default-TraceId";
         }
+        
+        public static string GetPrefix(this IConfiguration configuration)
+        {
+            string? value = configuration.GetSection("LoggerPrefix").Value;
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
+            return "Default";
+        }
     }
 }

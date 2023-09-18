@@ -11,6 +11,11 @@ In order to use this package, you need to configure Serilog to work with Elastic
 - `indexPrefix`
 - `minLoggingLevel`
 
+#### OR
+
+UseDirect Host Configuration about Serilog (with Elastic). You can do this by calling `builder.Host.AddLogger()` in `HostExtension.cs`. Additionally, make sure to provide the following configuration parameters:
+- `builder.Configuration` 
+
 ### 2. Add HttpContextAccessor via Dependency Injection
 
 Each middleware in this package requires access to the HTTP context. To provide access, add the `HttpContextAccessor` to your DI container using:

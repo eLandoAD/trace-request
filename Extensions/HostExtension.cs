@@ -10,19 +10,19 @@ namespace elando.ELK.TraceLogging.Extensions
     {
         public static void AddLogger(this IHostBuilder host, IConfiguration configuration)
         {
+            var prefix = configuration.GetPrefix();
             host.UseSerilog((hostContext, services, _configuration) =>
             {
-                //var httpContextAccessor = services.GetRequiredService<IHttpContextAccessor>();
-                //var requestId = httpContextAccessor.HttpContext?.Request.Headers.TryGetValue(TRACE_IDENTIFIER_KEY, out var traceId);
+
                 _configuration
                             .ReadFrom.Configuration(configuration)
                             .Enrich.FromLogContext()
                             .AddElasticLogging(
                                     elasticUri: "http://elasticsearch.kube-logging:9200/",
-                                    indexPrefix: $"euroins-{Assembly.GetExecutingAssembly().GetName().Name!.ToLower().Replace(".", "-")}",
+                                    indexPrefix: $"{prefix}-{Assembly.GetExecutingAssembly().GetName().Name!.ToLower().Replace(".", "-")}",
                                     minLoggingLevel: LogEventLevel.Information)
                             ;
-            }); 
+            });
         }
     }
 }
