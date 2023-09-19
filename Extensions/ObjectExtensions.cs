@@ -1,33 +1,73 @@
-﻿using Newtonsoft.Json;
-
-using static elando.ELK.TraceLogging.Constants.LibConstants;
+﻿using elando.ELK.TraceLogging.Constants;
+using Google.Protobuf.Collections;
 
 namespace elando.ELK.TraceLogging.Extensions
 {
     public static class ObjectExtensions
     {
+        #region RedactSensitiveData overloads
         /// <summary>
-        /// Protect sensitive data
+        /// Redacts the values of all given properties in the objects.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="objects"></param>
+        /// <param name="propertyNames"></param>
+        public static void RedactSensitiveData<T>(this RepeatedField<T> objects, params string[] propertyNames)
+           where T : class
+        {
+            foreach (var @object in objects)
+            {
+                RedactSensitiveData(@object, propertyNames);
+            }
+        }
+
+        /// <summary>
+        /// Redacts the values of all given properties in the objects.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="objects"></param>
+        /// <param name="propertyNames"></param>
+        public static void RedactSensitiveData<T>(this IEnumerable<T> objects, params string[] propertyNames)
+           where T : class
+        {
+            foreach (var @object in objects)
+            {
+                RedactSensitiveData(@object, propertyNames);
+            }
+        }
+
+        /// <summary>
+        /// Redacts the values of all given properties in the object.
+        /// </summary>
+        /// <code>
+        /// foreach (var user in Users)
+        /// {
+        ///    LogControllerHelper.RedactSensitiveData(user, nameof(user.EGN));
+        /// }
+        /// </code>
         /// <typeparam name="T"></typeparam>
         /// <param name="object"></param>
         /// <param name="propertyNames"></param>
-        /// <returns></returns>
-        public static T ProtectSensitiveData<T>(this T @object, params string[] propertyNames)
+        public static void RedactSensitiveData<T>(this T @object, params string[] propertyNames)
+            where T : class
         {
-            var type = typeof(T);
-            foreach (var propName in propertyNames)
+            if (@object is not null && propertyNames.Count() != 0)
             {
-                var prop = type.GetProperty(propName);
-                if (prop is not null && prop.CanWrite)
+                var type = typeof(T);
+                foreach (var propName in propertyNames)
                 {
-                    var defaultValue = GetDefaultRedactedValue(prop.PropertyType);
-                    prop.SetValue(@object, defaultValue);
+                    var prop = type.GetProperty(propName);
+                    if (prop is not null && prop.CanWrite)
+                    {
+                        var defaultValue = GetDefaultRedactedValue(prop.PropertyType);
+                        prop.SetValue(@object, defaultValue);
+                    }
                 }
             }
-            return @object;
         }
+        #endregion
 
+        #region private
         /// <summary>
         /// Returns custom default values depending on it's type.
         /// </summary>
@@ -37,39 +77,15 @@ namespace elando.ELK.TraceLogging.Extensions
         {
             if (type == typeof(string))
             {
-                return MASK;
+                return ELKConstants.REDACTED;
             }
             else if (type.IsValueType)
             {
-                return Activator.CreateInstance(type);
+                return Activator.CreateInstance(type)!;
             }
 
-            return null;
+            return null!;
         }
-
-        /// <summary>
-        /// Make a cloned object
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="object"></param>
-        /// <returns></returns>
-        public static T DeepCopy<T>(this T @object)
-          where T : class
-        {
-            if (@object == null) return null;
-
-            var objectJson = JsonConvert.SerializeObject(@object);
-            return JsonConvert.DeserializeObject<T>(objectJson);
-        }
-
-        /// <summary>
-        /// Serialize object to JSON
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="object"></param>
-        /// <returns></returns>
-        public static string ToJSON<T>(this T @object)
-           where T : class
-           => JsonConvert.SerializeObject(@object, Formatting.Indented);
+        #endregion
     }
 }
