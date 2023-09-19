@@ -16,7 +16,7 @@
         public int StatusId;
         public string StatusText;
         public Guid ResponseId;
-        public List<T>? Values;
+        public List<T> Values;
 
         /// <summary>
         /// Default Response object type.
@@ -24,7 +24,6 @@
         public HBOResponse()
         {
             this.Values = new List<T>();
-            this.ResponseId = new Guid();
             this.DocType = "0";
             this.CopyRight = ELKConstants.COPY_RIGHT;
             this.VersionNumber = ELKConstants.VERSION_NUMBER;
@@ -36,7 +35,7 @@
 
         public void UpdateRequestId(Guid requestId)
         {
-            ResponseId = requestId;
+            this.ResponseId = requestId;
         }
 
         /// <summary>
@@ -44,7 +43,7 @@
         /// </summary>
         /// <param name="Values">List of values to be printed</param>
         /// <param name="DocType">type of document</param>
-        public HBOResponse(List<T>? values):this()
+        public HBOResponse(List<T>? values) : this()
         {
             this.Values = values;
         }
