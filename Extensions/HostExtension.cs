@@ -8,7 +8,7 @@ namespace elando.ELK.TraceLogging.Extensions
 {
     public static class HostExtension
     {
-        public static void AddLogger(this IHostBuilder host, IConfiguration configuration)
+        public static void AddSerilogLogger(this IHostBuilder host, IConfiguration configuration)
         {
             var prefix = configuration.GetPrefix();
             host.UseSerilog((hostContext, services, _configuration) =>
