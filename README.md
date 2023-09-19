@@ -72,3 +72,8 @@ services.AddGrpcClient<gRPCClient>(options => ...)
 #### 7.2. HTTP Requests
 Note that HTTP requests are not implemented yet and require further development.
  
+#### 8. Logging Service
+Logging with custom messages. Use it in each class/file where you need it. To provide access, add the `ITraceLogService` to your DI container using:
+```csharp 
+builder.Services.AddTransient<ITraceLogService, TraceLogService>();
+```
