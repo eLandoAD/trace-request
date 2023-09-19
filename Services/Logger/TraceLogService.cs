@@ -1,11 +1,11 @@
-﻿using elando.ELK.TraceLogging.Constants;
-using elando.ELK.TraceLogging.Extensions;
+﻿using elando.ELK.TraceLogging.Extensions;
 using elando.ELK.TraceLogging.Wrappers;
-using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
+
+using static elando.ELK.TraceLogging.Extensions.ObjectExtensions;
 
 namespace elando.ELK.TraceLogging.Services.Logger
 {
@@ -92,7 +92,7 @@ namespace elando.ELK.TraceLogging.Services.Logger
             if (hasSensitiveData)
             {
                 requestToLog = model.DeepCopy();
-                RedactSensitiveData(requestToLog, sensitivePropertyNames!);
+                requestToLog.RedactSensitiveData(sensitivePropertyNames!);
             }
 
             var logModelWithTraceId = hasSensitiveData
@@ -138,7 +138,7 @@ namespace elando.ELK.TraceLogging.Services.Logger
         {
             if (response.Response is null)
             {
-                return response?.ToJSON();
+                return response?.ToJSON()!;
             }
 
             response.Response.UpdateRequestId(traceId);
@@ -155,7 +155,7 @@ namespace elando.ELK.TraceLogging.Services.Logger
             if (hasSensitiveData && hasData)
             {
                 responseToLog = response.DeepCopy();
-                RedactSensitiveData(responseToLog.Response.Values![0], sensitivePropertyNames);
+                responseToLog.Response.Values![0].RedactSensitiveData(sensitivePropertyNames);
             }
 
             // We use responseJson variable to not call ToJSON twice when we dont have sensitive data.
@@ -202,7 +202,7 @@ namespace elando.ELK.TraceLogging.Services.Logger
         {
             if (response.Response is null)
             {
-                return response?.ToJSON();
+                return response?.ToJSON()!;
             }
 
             response.Response.UpdateRequestId(traceId);
@@ -219,7 +219,7 @@ namespace elando.ELK.TraceLogging.Services.Logger
             if (hasSensitiveData && hasData)
             {
                 responseToLog = response.DeepCopy();
-                RedactSensitiveData(responseToLog.Response.Values[0], sensitivePropertyNames);
+                responseToLog.Response.Values![0].RedactSensitiveData(sensitivePropertyNames);
             }
 
             // We use responseJson variable to not call ToJSON twice when we dont have sensitive data.
@@ -235,89 +235,6 @@ namespace elando.ELK.TraceLogging.Services.Logger
 
             return responseJson;
         }
-        #endregion
-
-        #region RedactSensitiveData overloads
-        /// <summary>
-        /// Redacts the values of all given properties in the objects.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="objects"></param>
-        /// <param name="propertyNames"></param>
-        public static void RedactSensitiveData<T>(RepeatedField<T> objects, params string[] propertyNames)
-           where T : class
-        {
-            foreach (var @object in objects)
-            {
-                RedactSensitiveData(@object, propertyNames);
-            }
-        }
-
-        /// <summary>
-        /// Redacts the values of all given properties in the objects.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="objects"></param>
-        /// <param name="propertyNames"></param>
-        public static void RedactSensitiveData<T>(IEnumerable<T> objects, params string[] propertyNames)
-           where T : class
-        {
-            foreach (var @object in objects)
-            {
-                RedactSensitiveData(@object, propertyNames);
-            }
-        }
-
-        /// <summary>
-        /// Redacts the values of all given properties in the object.
-        /// </summary>
-        /// <code>
-        /// foreach (var user in Users)
-        /// {
-        ///    LogControllerHelper.RedactSensitiveData(user, nameof(user.EGN));
-        /// }
-        /// </code>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="object"></param>
-        /// <param name="propertyNames"></param>
-        public static void RedactSensitiveData<T>(T @object, params string[] propertyNames)
-            where T : class
-        {
-            if (@object is not null && propertyNames.Count() != 0)
-            {
-                var type = typeof(T);
-                foreach (var propName in propertyNames)
-                {
-                    var prop = type.GetProperty(propName);
-                    if (prop is not null && prop.CanWrite)
-                    {
-                        var defaultValue = GetDefaultRedactedValue(prop.PropertyType);
-                        prop.SetValue(@object, defaultValue);
-                    }
-                }
-            }
-        }
-        #endregion
-
-        #region private
-        /// <summary>
-        /// Returns custom default values depending on it's type.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        private static object GetDefaultRedactedValue(Type type)
-        {
-            if (type == typeof(string))
-            {
-                return ELKConstants.REDACTED;
-            }
-            else if (type.IsValueType)
-            {
-                return Activator.CreateInstance(type);
-            }
-
-            return null;
-        }
-        #endregion
+        #endregion 
     }
 }

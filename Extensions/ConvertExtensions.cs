@@ -15,10 +15,10 @@ namespace elando.ELK.TraceLogging.Extensions
         public static T DeepCopy<T>(this T @object)
             where T : class
         {
-            if (@object == null) return null;
+            if (@object == null) return null!;
 
             var objectJson = JsonConvert.SerializeObject(@object);
-            return JsonConvert.DeserializeObject<T>(objectJson);
+            return JsonConvert.DeserializeObject<T>(objectJson)!;
         }
     }
 }

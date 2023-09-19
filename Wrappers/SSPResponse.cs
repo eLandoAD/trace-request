@@ -20,7 +20,7 @@
         /// </summary>
         public List<string> StatusText;
         public Guid ResponseId;
-        public List<T>? Values;
+        public List<T> Values;
 
         /// <summary>
         /// Default Response object type.
@@ -28,7 +28,6 @@
         public SSPResponse()
         {
             Values = new List<T>();
-            ResponseId = new Guid();
             DocType = "0";
             CopyRight = ELKConstants.COPY_RIGHT;
             VersionNumber = ELKConstants.VERSION_NUMBER;
