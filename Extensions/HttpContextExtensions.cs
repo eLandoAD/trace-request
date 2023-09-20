@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 
 namespace elando.ELK.TraceLogging.Extensions
 {
@@ -17,7 +19,27 @@ namespace elando.ELK.TraceLogging.Extensions
             {
                 return traceId;
             }
+
             return null;
+        }
+
+        public static Guid GetTraceId(this HttpContext httpContext, IConfiguration configuration)
+        {
+            var success = false;
+            StringValues requestIdAsString = "";
+            if (httpContext is not null && configuration is not null)
+            {
+                success = httpContext.Request.Headers
+                    .TryGetValue(configuration.GetHeaderName(), out requestIdAsString);
+            }
+
+            Guid requestId = Guid.Empty;
+            if (success)
+            {
+                requestId = new Guid(requestIdAsString!);
+            }
+
+            return requestId;
         }
     }
 }

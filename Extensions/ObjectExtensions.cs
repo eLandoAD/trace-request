@@ -51,17 +51,19 @@ namespace elando.ELK.TraceLogging.Extensions
         public static void RedactSensitiveData<T>(this T @object, params string[] propertyNames)
             where T : class
         {
-            if (@object is not null && propertyNames.Count() != 0)
+            if (@object == null || propertyNames.Count() == 0)
             {
-                var type = typeof(T);
-                foreach (var propName in propertyNames)
+                return;
+            }
+
+            var type = typeof(T);
+            foreach (var propName in propertyNames)
+            {
+                var prop = type.GetProperty(propName);
+                if (prop is not null && prop.CanWrite)
                 {
-                    var prop = type.GetProperty(propName);
-                    if (prop is not null && prop.CanWrite)
-                    {
-                        var defaultValue = GetDefaultRedactedValue(prop.PropertyType);
-                        prop.SetValue(@object, defaultValue);
-                    }
+                    var defaultValue = GetDefaultRedactedValue(prop.PropertyType);
+                    prop.SetValue(@object, defaultValue);
                 }
             }
         }
