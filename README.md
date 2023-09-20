@@ -72,31 +72,29 @@ services.AddGrpcClient<gRPCClient>(options => ...)
 #### 7.2. HTTP Requests
 Note that HTTP requests are not implemented yet and require further development.
  
-### 8. Logging Service
-Use ITraceLogService instead of 'Microsoft.Extensions.Logging.ILogger'. Use it in each class/file where you need it. To provide access, add the `ITraceLogService` to your DI container using:
-```csharp 
-builder.Services.AddTransient<ITraceLogService, TraceLogService>();
-```
-#### 8.1 Example: How to use as 'Microsoft.Extensions.Logging.ILogger'
+### 8. Logging Extensions
+Use LoggerTraceExtensions based on 'Microsoft.Extensions.Logging.ILogger'.
+
+#### 8.1 Example: How to use LoggerTraceExtensions.
 ```csharp
-var traceId = _traceLogService.GetTraceId(this.HttpContext);
-_traceLogService.LogModelWithDepthOne(request, traceId);
+var traceId = this.HttpContext.GetTraceId();
+_logger.LogModelWithDepthOne(request, traceId);
 ```
 The traceId argument enables tracing of the log in an application & across microservice architecture.
 
 #### 8.2 Example: Redact sensitive data - object
 ```csharp
-var traceId = _traceLogService.GetTraceId(this.HttpContext);
-_traceLogService.LogModelWithDepthOne(model, traceId, nameof(model.Phone));
+var traceId = this.HttpContext.GetTraceId();
+_logger.LogModelWithDepthOne(model, traceId, nameof(model.Phone));
 ```
 #### 8.3 Example: Redact sensitive data - collection
 ```csharp
-var traceId = _traceLogService.GetTraceId(this.HttpContext);
+var traceId = this.HttpContext.GetTraceId();
 
 // New code
 IEnumerable<TypeModel> copy = model.DeepCopy();
 copy.RedactSensitiveData(nameof(TypeModel.Address), nameof(TypeModel.Phone));
 
-_traceLogService.LogModelWithDepthOne(copy, traceId);
+_logger.LogModelWithDepthOne(copy, traceId);
 ```
 
