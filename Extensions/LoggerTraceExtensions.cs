@@ -5,6 +5,10 @@ namespace elando.ELK.TraceLogging.Extensions
     public record LogModelWithRequestId<T>(T Model, Guid requestId);
     public record LogModelWithMessageAndTraceId<T>(string Message, LogModelWithRequestId<T>? LogModelWithRequestId);
 
+
+    /// <summary>
+    /// Extends Microsoft.Extensions.Logger.ILogger
+    /// </summary>
     public static class LoggerTraceExtensions
     {
         #region LogWithTraceId overloads
@@ -15,7 +19,6 @@ namespace elando.ELK.TraceLogging.Extensions
         /// <param name="logger"></param>
         /// <param name="model"></param>
         /// <param name="traceId"></param>
-        /// <param name="message"></param>
         /// <param name="sensitivePropertyNames"></param>
         /// <returns>New object with model and traceId.</returns>
         // - logLevel
