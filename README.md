@@ -15,8 +15,9 @@ In order to use this package, you need to configure Serilog to work with Elastic
 
 UseDirect Host Configuration about Serilog (with Elastic). You can do this by calling `builder.Host.AddLogger()` in `HostExtension.cs`. Additionally, make sure to provide the following configuration parameters:
 - `builder.Configuration` 
-- `LogEventLevel logLevel = LogEventLevel.Information` 
-##### Need appsettings.json content 
+- `LogEventLevel logLevel = LogEventLevel.Information`  
+ 
+### 2. Add configuration property for header name into appsettings.json
 ```json
 {
   "TraceIdKey": "Your-Custom_Key-Name",
@@ -24,14 +25,15 @@ UseDirect Host Configuration about Serilog (with Elastic). You can do this by ca
 }
 ````
 
-### 2. Add HttpContextAccessor via Dependency Injection
+### 3. Add HttpContextAccessor via Dependency Injection
 
 Each middleware in this package requires access to the HTTP context. To provide access, add the `HttpContextAccessor` to your DI container using:
 
 ```csharp
 builder.Services.AddHttpContextAccessor();
 ```
-### 3. Configure HTTP Logging
+
+### 4. Configure HTTP Logging
 Configure HTTP request/response logging using the following code:
 
 ```csharp 
@@ -41,10 +43,6 @@ builder.Services.AddHttpLogging(logging =>
 });
 ```
 
-### 4. Add configuration property for header name into appsettings.json
-```json
-"TraceIdKey": "YOUR-CUSTOM-HEADER-NAME",
-```
 
 ### 5. Use Trace Identifier Middleware 
 Not needed for application inside the kube8.
