@@ -113,6 +113,10 @@ namespace elando.ELK.TraceLogging.Middleware
             where TRequest : class
             where TResponse : class
         {
+            if (_httpContextAccessor.HttpContext is null)
+            {
+                return context;
+            }
             var traceId = _httpContextAccessor.HttpContext.GetTraceHeader(_traceHeaderName);
 
             if (string.IsNullOrWhiteSpace(traceId))
