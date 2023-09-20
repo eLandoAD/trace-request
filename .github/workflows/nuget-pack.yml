@@ -1,0 +1,28 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.x
+
+    - name: Build and publish NuGet package
+      run: |
+        dotnet build elando.ELK.TraceLogging.csproj -c Release
+        dotnet pack elando.ELK.TraceLogging.csproj -c Release --no-build --output ./nupkg
+
+    - name: Publish to NuGet.org
+      run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGETAPIKEYKNEV }}
