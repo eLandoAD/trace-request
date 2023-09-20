@@ -23,5 +23,14 @@ namespace elando.ELK.TraceLogging.Extensions
             }
             return "Default";
         }
+        public static string GetElasticUriUri(this IConfiguration configuration)
+        {
+            string? value = configuration.GetSection("ElasticUri").Value;
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
+            throw new NullReferenceException("ElasticSearch Uri does not provide to appsettings");
+        }
     }
 }

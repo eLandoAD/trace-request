@@ -6,11 +6,21 @@ using System.Reflection;
 
 namespace elando.ELK.TraceLogging.Extensions
 {
+    /// <summary>
+    /// IHost extensions to config the Serrilog and Elstic Search
+    /// </summary>
     public static class HostExtension
     {
-        public static void AddSerilogLogger(this IHostBuilder host, IConfiguration configuration)
+        /// <summary>
+        /// Extensions to config the Serrilog and Elstic Search
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="configuration"></param>
+        /// <param name="logLevel"></param>
+        public static void AddSerilogLogger(this IHostBuilder host, IConfiguration configuration, LogEventLevel logLevel = LogEventLevel.Information)
         {
             var prefix = configuration.GetPrefix();
+            var elasticUri = configuration.GetElasticUriUri();
             host.UseSerilog((hostContext, services, _configuration) =>
             {
 
@@ -18,9 +28,9 @@ namespace elando.ELK.TraceLogging.Extensions
                             .ReadFrom.Configuration(configuration)
                             .Enrich.FromLogContext()
                             .AddElasticLogging(
-                                    elasticUri: "http://elasticsearch.kube-logging:9200/",
+                                    elasticUri: elasticUri,
                                     indexPrefix: $"{prefix}-{Assembly.GetExecutingAssembly().GetName().Name!.ToLower().Replace(".", "-")}",
-                                    minLoggingLevel: LogEventLevel.Information)
+                                    minLoggingLevel: logLevel)
                             ;
             });
         }

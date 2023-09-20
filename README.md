@@ -15,6 +15,14 @@ In order to use this package, you need to configure Serilog to work with Elastic
 
 UseDirect Host Configuration about Serilog (with Elastic). You can do this by calling `builder.Host.AddLogger()` in `HostExtension.cs`. Additionally, make sure to provide the following configuration parameters:
 - `builder.Configuration` 
+- `LogEventLevel logLevel = LogEventLevel.Information` 
+##### Need appsettings.json content 
+```json
+{
+  "TraceIdKey": "Your-Custom_Key-Name",
+  "ElasticUri": "your.elastic.uri/",
+}
+````
 
 ### 2. Add HttpContextAccessor via Dependency Injection
 
