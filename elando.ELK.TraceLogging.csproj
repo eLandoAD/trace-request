@@ -8,7 +8,7 @@
 		<Description>Trace logging in to microservices with custom Http Header</Description>
 		<Copyright>own license</Copyright>
 		<PackageTags>Logging Trace</PackageTags>
-		<Version>1.3.3</Version>
+		<Version>1.3.4</Version>
 		<PackageLicenseFile>License.md</PackageLicenseFile>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>

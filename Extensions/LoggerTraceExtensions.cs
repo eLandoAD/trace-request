@@ -2,9 +2,9 @@
 
 namespace elando.ELK.TraceLogging.Extensions
 {
-    public record LogModelWithRequestId<T>(T Model, Guid requestId);
-    public record LogModelWithMessageAndTraceId<T>(string Message, LogModelWithRequestId<T>? LogModelWithRequestId);
-
+    public record LogModelWithRequestId<T>(T Model, Guid RequestId) where T : class;
+    public record LogMessage(string Message);
+    public record LogModelWithMessageAndTraceId<T>(LogModelWithRequestId<T> Model, LogMessage Message) where T : class;
 
     /// <summary>
     /// Extends Microsoft.Extensions.Logger.ILogger
@@ -18,29 +18,51 @@ namespace elando.ELK.TraceLogging.Extensions
         /// <typeparam name="T"></typeparam>
         /// <param name="logger"></param>
         /// <param name="model"></param>
+        /// <param name="logMessage"></param>
         /// <param name="traceId"></param>
         /// <param name="sensitivePropertyNames"></param>
         /// <returns>New object with model and traceId.</returns>
-        // - logLevel
+        public static LogModelWithRequestId<T> LogWithTraceId<T>(
+            this ILogger logger,
+            T model,
+            LogMessage logMessage,
+            Guid traceId,
+            params string[] sensitivePropertyNames)
+            where T : class
+                => logger.LogWithTraceId(model, logMessage, traceId, LogLevel.Information, sensitivePropertyNames);
+
+        /// <summary>
+        /// Logs only objects with depth-1 and if logger is not null.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="logger"></param>
+        /// <param name="model"></param>
+        /// <param name="traceId"></param>
+        /// <param name="sensitivePropertyNames"></param>
+        /// <returns>New object with model and traceId.</returns>
         public static LogModelWithRequestId<T> LogWithTraceId<T>(
             this ILogger logger,
             T model,
             Guid traceId,
             params string[] sensitivePropertyNames)
             where T : class
-                => logger.LogWithTraceId(model, traceId, LogLevel.Information, sensitivePropertyNames);
+                => logger.LogWithTraceId(model, null!, traceId, LogLevel.Information, sensitivePropertyNames);
 
         /// <summary>
         /// Logs only objects with depth-1 and if logger is not null.
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="logger"></param>
         /// <param name="model"></param>
+        /// <param name="logMessage"></param>
+        /// <param name="traceId"></param>
         /// <param name="logLevel"></param>
         /// <param name="sensitivePropertyNames"></param>
         /// <returns>New object with model and traceId.</returns>
         public static LogModelWithRequestId<T> LogWithTraceId<T>(
             this ILogger logger,
             T model,
+            LogMessage logMessage,
             Guid traceId,
             LogLevel logLevel,
             params string[] sensitivePropertyNames)
@@ -54,7 +76,7 @@ namespace elando.ELK.TraceLogging.Extensions
 
             T requestToLog = model;
 
-            bool hasSensitiveData = sensitivePropertyNames != null && sensitivePropertyNames.Length > 0;
+            bool hasSensitiveData = sensitivePropertyNames?.Length > 0;
             if (hasSensitiveData)
             {
                 requestToLog = model.DeepCopy();
@@ -65,7 +87,15 @@ namespace elando.ELK.TraceLogging.Extensions
                     ? new LogModelWithRequestId<T>(requestToLog, traceId)
                     : resultWithTraceId;
 
-            logger.Log(logLevel, logModelWithTraceId.ToJSON());
+            if (!string.IsNullOrWhiteSpace(logMessage?.Message))
+            {
+                var logAll = new LogModelWithMessageAndTraceId<T>(logModelWithTraceId, logMessage!);
+                logger.Log(logLevel, logAll.ToJSON());
+            }
+            else
+            {
+                logger.Log(logLevel, logModelWithTraceId.ToJSON());
+            }
 
             return resultWithTraceId;
         }
