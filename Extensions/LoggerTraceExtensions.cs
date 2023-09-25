@@ -12,6 +12,7 @@ namespace elando.ELK.TraceLogging.Extensions
     public static class LoggerTraceExtensions
     {
         #region LogWithTraceId overloads
+
         /// <summary>
         /// Logs only objects with depth-1 and if logger is not null.
         /// </summary>
@@ -30,6 +31,25 @@ namespace elando.ELK.TraceLogging.Extensions
             params string[] sensitivePropertyNames)
             where T : class
                 => logger.LogWithTraceId(model, logMessage, traceId, LogLevel.Information, sensitivePropertyNames);
+
+        /// <summary>
+        /// Logs only objects with depth-1 and if logger is not null.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="logger"></param>
+        /// <param name="model"></param>
+        /// <param name="traceId"></param>
+        /// <param name="logLevel"></param>
+        /// <param name="sensitivePropertyNames"></param>
+        /// <returns>New object with model and traceId.</returns>
+        public static LogModelWithRequestId<T> LogWithTraceId<T>(
+            this ILogger logger,
+            T model,
+            Guid traceId,
+            LogLevel logLevel,
+            params string[] sensitivePropertyNames)
+            where T : class
+                => logger.LogWithTraceId(model, null!, traceId, logLevel, sensitivePropertyNames);
 
         /// <summary>
         /// Logs only objects with depth-1 and if logger is not null.
