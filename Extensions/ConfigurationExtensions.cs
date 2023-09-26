@@ -23,6 +23,7 @@ namespace elando.ELK.TraceLogging.Extensions
             }
             return "Default";
         }
+
         public static string GetElasticUriUri(this IConfiguration configuration)
         {
             string? value = configuration.GetSection("ElasticUri").Value;
@@ -31,6 +32,17 @@ namespace elando.ELK.TraceLogging.Extensions
                 return value;
             }
             throw new NullReferenceException("ElasticSearch Uri does not provide to appsettings");
+        }
+
+        public static string GetLogFilter(this IConfiguration configuration)
+        {
+            string? value = configuration.GetSection("GlobalLogingFilter").Value;
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
+
+            return "";
         }
     }
 }

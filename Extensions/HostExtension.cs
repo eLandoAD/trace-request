@@ -29,9 +29,9 @@ namespace elando.ELK.TraceLogging.Extensions
                             .Enrich.FromLogContext()
                             .AddElasticLogging(
                                     elasticUri: elasticUri,
-                                    indexPrefix: $"{prefix}-{Assembly.GetExecutingAssembly().GetName().Name!.ToLower().Replace(".", "-")}",
-                                    minLoggingLevel: logLevel)
-                            ;
+                                    indexPrefix: $"{prefix}-{Assembly.GetCallingAssembly().GetName().Name!.ToLower().Replace(".", "-")}",
+                                    minLoggingLevel: logLevel,
+                                    configuration: configuration);
             });
         }
     }

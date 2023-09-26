@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Microsoft.Extensions.Configuration;
+using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;
@@ -15,18 +16,35 @@ namespace elando.ELK.TraceLogging.Extensions
         /// <param name="indexPrefix"></param>
         /// <param name="minLoggingLevel"></param>
         /// <returns></returns>
-        public static LoggerConfiguration AddElasticLogging(this LoggerConfiguration configuration, string elasticUri, string indexPrefix, LogEventLevel minLoggingLevel)
+        public static LoggerConfiguration AddElasticLogging(this LoggerConfiguration logConfiguration, string elasticUri, string indexPrefix, LogEventLevel minLoggingLevel, IConfiguration configuration)
         {
+            var logFilter = configuration.GetLogFilter();
 
-            configuration.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticUri))
+            if (string.IsNullOrWhiteSpace(logFilter))
             {
-                AutoRegisterTemplate = true,
-                AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
-                IndexFormat = $"{indexPrefix}",
-                LevelSwitch = new LoggingLevelSwitch(minLoggingLevel),
-            });
+                logConfiguration
+                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticUri))
+                    {
+                        AutoRegisterTemplate = true,
+                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
+                        IndexFormat = $"{indexPrefix}",
+                        LevelSwitch = new LoggingLevelSwitch(minLoggingLevel),
+                    });
+            }
+            else
+            {
+                logConfiguration
+                    .Filter.ByIncludingOnly(logEvent => logEvent.MessageTemplate.Text.Contains(logFilter))
+                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticUri))
+                    {
+                        AutoRegisterTemplate = true,
+                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
+                        IndexFormat = $"{indexPrefix}",
+                        LevelSwitch = new LoggingLevelSwitch(minLoggingLevel),
+                    });
+            }
 
-            return configuration;
+            return logConfiguration;
         }
     }
 }

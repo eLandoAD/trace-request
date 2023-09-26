@@ -22,6 +22,8 @@ UseDirect Host Configuration about Serilog (with Elastic). You can do this by ca
 {
   "TraceIdKey": "Your-Custom_Key-Name",
   "ElasticUri": "your.elastic.uri/",
+  "LoggerPrefix": "Your-Custom_Prefix",
+  "GlobalLogingFilter": "Your-Custom_Loging-Filter" // Optional
 }
 ````
 
