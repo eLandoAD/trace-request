@@ -106,3 +106,14 @@ copy.RedactSensitiveData(nameof(TypeModel.Address), nameof(TypeModel.Phone));
 _logger.LogModelWithDepthOne(copy, traceId);
 ```
 
+### 9. Hints:
+
+#### 9.1 Task.Run(....)
+```csharp
+   var traceId = _contextAccessor.HttpContext.GetTraceId(_configuration);
+
+ var headers = new Metadata {{_configuration.GetHeaderName(), traceId.ToString() } }
+
+_grpcClient.CallAsync (new RPCModelRequest(), headers);
+
+```
