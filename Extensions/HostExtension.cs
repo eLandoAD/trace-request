@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
-using System.Reflection;
 
 namespace elando.ELK.TraceLogging.Extensions
 {
@@ -16,6 +16,7 @@ namespace elando.ELK.TraceLogging.Extensions
         /// </summary>
         /// <param name="host"></param>
         /// <param name="configuration"></param>
+        /// <param name="assemblyName"></param>
         /// <param name="logLevel"></param>
         public static void AddSerilogLogger(
             this IHostBuilder host,
@@ -29,15 +30,17 @@ namespace elando.ELK.TraceLogging.Extensions
 
             host.UseSerilog((hostContext, services, _configuration) =>
             {
-
                 _configuration
                             .ReadFrom.Configuration(configuration)
                             .Enrich.FromLogContext()
-                            .AddElasticLogging(
-                                    elasticUri: elasticUri,
-                                    indexPrefix: $"{prefix}-{assemblyName}",
-                                    minLoggingLevel: logLevel,
-                                    configuration: configuration);
+                            .WriteTo.Console(levelSwitch: new LoggingLevelSwitch(logLevel))
+                            .WriteTo.Logger(loggerConfig =>
+                                loggerConfig
+                                    .AddElasticLogging(
+                                        elasticUri: elasticUri,
+                                        indexPrefix: $"{prefix}-{assemblyName}",
+                                        minLoggingLevel: logLevel,
+                                        configuration: configuration));
             });
         }
     }
