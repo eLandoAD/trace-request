@@ -24,9 +24,9 @@ namespace elando.ELK.TraceLogging.Extensions
             string assemblyName,
             LogEventLevel logLevel = LogEventLevel.Information)
         {
-            var prefix = configuration.GetPrefix().ToLower();
+            var prefix = configuration.GetPrefix();
+            var indexPrefix = FormatLogIndex(prefix, assemblyName);
             var elasticUri = configuration.GetElasticUriUri();
-            assemblyName = assemblyName.ToLower().Replace(".", "-").Replace(prefix, "");
 
             host.UseSerilog((hostContext, services, _configuration) =>
             {
@@ -38,10 +38,18 @@ namespace elando.ELK.TraceLogging.Extensions
                                 loggerConfig
                                     .AddElasticLogging(
                                         elasticUri: elasticUri,
-                                        indexPrefix: $"{prefix}-{assemblyName}",
+                                        indexPrefix: indexPrefix,
                                         minLoggingLevel: logLevel,
                                         configuration: configuration));
             });
+        }
+
+        private static string FormatLogIndex(string prefix, string assemblyName)
+        {
+            prefix = prefix.ToLower();
+            assemblyName = assemblyName.ToLower().Replace(".", "-").Replace(prefix, "");
+
+            return $"{prefix}-{assemblyName}".Replace("--", "-");
         }
     }
 }

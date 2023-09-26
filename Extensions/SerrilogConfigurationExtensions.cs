@@ -32,7 +32,7 @@ namespace elando.ELK.TraceLogging.Extensions
                     {
                         AutoRegisterTemplate = true,
                         AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
-                        IndexFormat = $"{indexPrefix}",
+                        IndexFormat = indexPrefix,
                         LevelSwitch = new LoggingLevelSwitch(minLoggingLevel),
                     });
             }
@@ -44,7 +44,7 @@ namespace elando.ELK.TraceLogging.Extensions
                     {
                         AutoRegisterTemplate = true,
                         AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
-                        IndexFormat = $"{indexPrefix}",
+                        IndexFormat = indexPrefix,
                         LevelSwitch = new LoggingLevelSwitch(minLoggingLevel),
                     });
             }
