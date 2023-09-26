@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "elando.ELK.TraceLogging", "elando.ELK.TraceLogging.csproj", "{89732751-BC13-4FB1-82D8-AF121E29CAC3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityService", "..\..\..\SSP\Euroins.Identity\IdentityService.csproj", "{041751D7-7248-49A9-8120-1DB84440BBD4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{89732751-BC13-4FB1-82D8-AF121E29CAC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89732751-BC13-4FB1-82D8-AF121E29CAC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89732751-BC13-4FB1-82D8-AF121E29CAC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{041751D7-7248-49A9-8120-1DB84440BBD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{041751D7-7248-49A9-8120-1DB84440BBD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{041751D7-7248-49A9-8120-1DB84440BBD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{041751D7-7248-49A9-8120-1DB84440BBD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
