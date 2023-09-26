@@ -16,7 +16,12 @@ namespace elando.ELK.TraceLogging.Extensions
         /// <param name="indexPrefix"></param>
         /// <param name="minLoggingLevel"></param>
         /// <returns></returns>
-        public static LoggerConfiguration AddElasticLogging(this LoggerConfiguration logConfiguration, string elasticUri, string indexPrefix, LogEventLevel minLoggingLevel, IConfiguration configuration)
+        public static LoggerConfiguration AddElasticLogging(
+            this LoggerConfiguration logConfiguration,
+            string elasticUri,
+            string indexPrefix,
+            LogEventLevel minLoggingLevel,
+            IConfiguration configuration)
         {
             var logFilter = configuration.GetLogFilter();
 

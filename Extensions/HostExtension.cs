@@ -17,10 +17,16 @@ namespace elando.ELK.TraceLogging.Extensions
         /// <param name="host"></param>
         /// <param name="configuration"></param>
         /// <param name="logLevel"></param>
-        public static void AddSerilogLogger(this IHostBuilder host, IConfiguration configuration, LogEventLevel logLevel = LogEventLevel.Information)
+        public static void AddSerilogLogger(
+            this IHostBuilder host,
+            IConfiguration configuration,
+            string assemblyName,
+            LogEventLevel logLevel = LogEventLevel.Information)
         {
-            var prefix = configuration.GetPrefix();
+            var prefix = configuration.GetPrefix().ToLower();
             var elasticUri = configuration.GetElasticUriUri();
+            assemblyName = assemblyName.ToLower().Replace(".", "-").Replace(prefix, "");
+
             host.UseSerilog((hostContext, services, _configuration) =>
             {
 
@@ -29,7 +35,7 @@ namespace elando.ELK.TraceLogging.Extensions
                             .Enrich.FromLogContext()
                             .AddElasticLogging(
                                     elasticUri: elasticUri,
-                                    indexPrefix: $"{prefix}-{Assembly.GetCallingAssembly().GetName().Name!.ToLower().Replace(".", "-")}",
+                                    indexPrefix: $"{prefix}-{assemblyName}",
                                     minLoggingLevel: logLevel,
                                     configuration: configuration);
             });
