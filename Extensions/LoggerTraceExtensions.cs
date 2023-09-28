@@ -4,7 +4,7 @@ namespace elando.ELK.TraceLogging.Extensions
 {
     public record LogModelWithRequestId<T>(T Model, Guid RequestId) where T : class;
     public record LogMessage(string Message);
-    public record LogModelWithMessageAndTraceId<T>(LogModelWithRequestId<T> Model, LogMessage Message) where T : class;
+    public record LogModelWithMessageAndTraceId<T>(LogMessage Message, LogModelWithRequestId<T> Model) where T : class;
 
     /// <summary>
     /// Extends Microsoft.Extensions.Logger.ILogger
@@ -12,7 +12,6 @@ namespace elando.ELK.TraceLogging.Extensions
     public static class LoggerTraceExtensions
     {
         #region LogWithTraceId overloads
-
         /// <summary>
         /// Logs only objects with depth-1 and if logger is not null.
         /// </summary>
@@ -109,7 +108,7 @@ namespace elando.ELK.TraceLogging.Extensions
 
             if (!string.IsNullOrWhiteSpace(logMessage?.Message))
             {
-                var logAll = new LogModelWithMessageAndTraceId<T>(logModelWithTraceId, logMessage!);
+                var logAll = new LogModelWithMessageAndTraceId<T>(logMessage!, logModelWithTraceId);
                 logger.Log(logLevel, logAll.ToJSON());
             }
             else
