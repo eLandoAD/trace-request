@@ -8,7 +8,9 @@ namespace elando.ELK.TraceLogging.Extensions
     {
         public static void AddTraceHeader(this HttpContext httpContext, string traceName)
         {
-            httpContext.Request.Headers.Add(traceName, Guid.NewGuid().ToString());
+            var traceId = Guid.NewGuid().ToString();
+            httpContext.Request.Headers.Add(traceName, traceId);
+            httpContext.Response.Headers.Add(traceName, traceId);
         }
 
         public static string? GetTraceHeader(this HttpContext httpContext, string traceName)
