@@ -8,7 +8,7 @@ namespace elando.ELK.TraceLogging.Middleware
 {
     //
     // Summary:
-    //     Middleware. Add Trace Header with TraceHeaderName and Guid.
+    //     Middleware. Add Trace Header with TraceHeaderName and Guid and UserId if Auth.
     //     Set Default Key: "X-Default-TraceId" or custom - read from appsettings.json "TraceIdKey": "your_customKey"
     // Type parameters:
     //   ContextAccessor:

@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using elando.ELK.TraceLogging.Constants;
+using Microsoft.Extensions.Logging;
 
 namespace elando.ELK.TraceLogging.Extensions
 {
-    public record LogModelWithRequestId<T>(T Model, Guid RequestId) where T : class;
+    public record LogModelWithTraceData<T>(T Model, string RequestId, string? userId = null) where T : class;
     public record LogMessage(string Message);
-    public record LogModelWithMessageAndTraceId<T>(LogMessage Message, LogModelWithRequestId<T> Model) where T : class;
+    public record LogModelWithMessageAndTraceData<T>(LogMessage Message, LogModelWithTraceData<T> Model) where T : class;
 
     /// <summary>
     /// Extends Microsoft.Extensions.Logger.ILogger
@@ -22,11 +23,11 @@ namespace elando.ELK.TraceLogging.Extensions
         /// <param name="traceId"></param>
         /// <param name="sensitivePropertyNames"></param>
         /// <returns>New object with model and traceId.</returns>
-        public static LogModelWithRequestId<T> LogWithTraceId<T>(
+        public static LogModelWithTraceData<T> LogWithTraceId<T>(
             this ILogger logger,
             T model,
             LogMessage logMessage,
-            Guid traceId,
+            string traceId,
             params string[] sensitivePropertyNames)
             where T : class
                 => logger.LogWithTraceId(model, logMessage, traceId, LogLevel.Information, sensitivePropertyNames);
@@ -41,10 +42,10 @@ namespace elando.ELK.TraceLogging.Extensions
         /// <param name="logLevel"></param>
         /// <param name="sensitivePropertyNames"></param>
         /// <returns>New object with model and traceId.</returns>
-        public static LogModelWithRequestId<T> LogWithTraceId<T>(
+        public static LogModelWithTraceData<T> LogWithTraceId<T>(
             this ILogger logger,
             T model,
-            Guid traceId,
+            string traceId,
             LogLevel logLevel,
             params string[] sensitivePropertyNames)
             where T : class
@@ -59,10 +60,10 @@ namespace elando.ELK.TraceLogging.Extensions
         /// <param name="traceId"></param>
         /// <param name="sensitivePropertyNames"></param>
         /// <returns>New object with model and traceId.</returns>
-        public static LogModelWithRequestId<T> LogWithTraceId<T>(
+        public static LogModelWithTraceData<T> LogWithTraceId<T>(
             this ILogger logger,
             T model,
-            Guid traceId,
+            string traceId,
             params string[] sensitivePropertyNames)
             where T : class
                 => logger.LogWithTraceId(model, null!, traceId, LogLevel.Information, sensitivePropertyNames);
@@ -78,19 +79,20 @@ namespace elando.ELK.TraceLogging.Extensions
         /// <param name="logLevel"></param>
         /// <param name="sensitivePropertyNames"></param>
         /// <returns>New object with model and traceId.</returns>
-        public static LogModelWithRequestId<T> LogWithTraceId<T>(
+        public static LogModelWithTraceData<T> LogWithTraceId<T>(
             this ILogger logger,
             T model,
             LogMessage logMessage,
-            Guid traceId,
+            string traceId,
             LogLevel logLevel,
             params string[] sensitivePropertyNames)
             where T : class
         {
-            var resultWithTraceId = new LogModelWithRequestId<T>(model, traceId);
+            LogModelWithTraceData<T> resultWithTraceData = PopulateLogModelWithTraceData(model, traceId);
+
             if (logger is null)
             {
-                return resultWithTraceId;
+                return resultWithTraceData;
             }
 
             T requestToLog = model;
@@ -103,12 +105,12 @@ namespace elando.ELK.TraceLogging.Extensions
             }
 
             var logModelWithTraceId = hasSensitiveData
-                    ? new LogModelWithRequestId<T>(requestToLog, traceId)
-                    : resultWithTraceId;
+                    ? new LogModelWithTraceData<T>(requestToLog, traceId)
+                    : resultWithTraceData;
 
             if (!string.IsNullOrWhiteSpace(logMessage?.Message))
             {
-                var logAll = new LogModelWithMessageAndTraceId<T>(logMessage!, logModelWithTraceId);
+                var logAll = new LogModelWithMessageAndTraceData<T>(logMessage!, logModelWithTraceId);
                 logger.Log(logLevel, logAll.ToJSON());
             }
             else
@@ -116,7 +118,33 @@ namespace elando.ELK.TraceLogging.Extensions
                 logger.Log(logLevel, logModelWithTraceId.ToJSON());
             }
 
-            return resultWithTraceId;
+            return resultWithTraceData;
+        }
+        #endregion
+
+        #region Privates
+        /// <summary>
+        /// Populates the object. Population differs based on the user's Authorization token.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="model"></param>
+        /// <param name="traceId"></param>
+        /// <returns></returns>
+        private static LogModelWithTraceData<T> PopulateLogModelWithTraceData<T>(T model, string traceId)
+             where T : class
+        {
+            if (traceId is not null && traceId.Contains(ELKConstants.SPLITTER))
+            {
+                var traceArgs = traceId.Split(ELKConstants.SPLITTER).ToList();
+                var requestId = traceArgs.FirstOrDefault();
+                var userId = traceArgs.Skip(1).FirstOrDefault();
+
+                return new LogModelWithTraceData<T>(model, requestId, userId);
+            }
+            else
+            {
+                return new LogModelWithTraceData<T>(model, traceId);
+            }
         }
         #endregion
     }
