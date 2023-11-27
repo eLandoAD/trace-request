@@ -64,7 +64,7 @@ namespace elando.ELK.TraceLogging.Extensions
                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(jwtAsString);
                 var userId = jwt.Claims.First(c => c.Type.Equals("userId", StringComparison.OrdinalIgnoreCase))?.Value;
 
-                traceId = traceId += $"{ELKConstants.SPLITTER}{userId}";
+                traceId = traceId += $"{ELKConstants.SPLITTER}{userId ?? "UserId claim missing in token."}";
             }
 
             return traceId;
