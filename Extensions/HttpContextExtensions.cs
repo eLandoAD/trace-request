@@ -58,8 +58,12 @@ namespace elando.ELK.TraceLogging.Extensions
         private static string AddUserIdIfAuthenticated(HttpContext httpContext, string traceId)
         {
             var authorizationHeaderValue = httpContext.Request.Headers["Authorization"].ToString();
-            var jwtAsString = authorizationHeaderValue.Split(" ").GetValue(1)?.ToString();
-            if (string.IsNullOrWhiteSpace(jwtAsString))
+            var jwtAsString = authorizationHeaderValue
+               .Split(" ")
+               .Skip(1)
+               .FirstOrDefault();
+
+            if (!string.IsNullOrWhiteSpace(jwtAsString))
             {
                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(jwtAsString);
                 var userId = jwt.Claims.First(c => c.Type.Equals("userId", StringComparison.OrdinalIgnoreCase))?.Value;
