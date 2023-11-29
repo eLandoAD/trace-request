@@ -136,10 +136,10 @@ namespace elando.ELK.TraceLogging.Extensions
             if (traceId is not null && traceId.Contains(ELKConstants.SPLITTER))
             {
                 var traceArgs = traceId.Split(ELKConstants.SPLITTER).ToList();
-                var requestId = traceArgs.FirstOrDefault()!;
+                var requestId = traceArgs.FirstOrDefault();
                 var userId = traceArgs.Skip(1).FirstOrDefault();
 
-                return new LogModelWithTraceData<T>(model, requestId, userId);
+                return new LogModelWithTraceData<T>(model, requestId ?? "", userId);
             }
             else
             {
