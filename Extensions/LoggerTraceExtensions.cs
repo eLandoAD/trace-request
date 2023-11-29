@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace elando.ELK.TraceLogging.Extensions
 {
-    public record LogModelWithTraceData<T>(T Model, string RequestId, string? userId = null) where T : class;
+    public record LogModelWithTraceData<T>(T Model, string RequestId, string? UserId = null) where T : class;
     public record LogMessage(string Message);
     public record LogModelWithMessageAndTraceData<T>(LogMessage Message, LogModelWithTraceData<T> Model) where T : class;
 
@@ -105,7 +105,7 @@ namespace elando.ELK.TraceLogging.Extensions
             }
 
             var logModelWithTraceId = hasSensitiveData
-                    ? new LogModelWithTraceData<T>(requestToLog, traceId)
+                    ? new LogModelWithTraceData<T>(requestToLog, resultWithTraceData.RequestId, resultWithTraceData.UserId)
                     : resultWithTraceData;
 
             if (!string.IsNullOrWhiteSpace(logMessage?.Message))
@@ -136,10 +136,10 @@ namespace elando.ELK.TraceLogging.Extensions
             if (traceId is not null && traceId.Contains(ELKConstants.SPLITTER))
             {
                 var traceArgs = traceId.Split(ELKConstants.SPLITTER).ToList();
-                var requestId = traceArgs.FirstOrDefault()!;
+                var requestId = traceArgs.FirstOrDefault();
                 var userId = traceArgs.Skip(1).FirstOrDefault();
 
-                return new LogModelWithTraceData<T>(model, requestId, userId);
+                return new LogModelWithTraceData<T>(model, requestId ?? "", userId);
             }
             else
             {
