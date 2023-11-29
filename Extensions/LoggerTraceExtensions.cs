@@ -105,7 +105,7 @@ namespace elando.ELK.TraceLogging.Extensions
             }
 
             var logModelWithTraceId = hasSensitiveData
-                    ? new LogModelWithTraceData<T>(requestToLog, traceId)
+                    ? new LogModelWithTraceData<T>(requestToLog, resultWithTraceData.RequestId, resultWithTraceData.UserId)
                     : resultWithTraceData;
 
             if (!string.IsNullOrWhiteSpace(logMessage?.Message))
