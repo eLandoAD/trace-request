@@ -12,6 +12,7 @@ namespace elando.ELK.TraceLogging.Extensions
         {
             var traceId = Guid.NewGuid().ToString();
             traceId = AddUserIdIfAuthenticated(httpContext, traceId);
+            traceId = RemoveDashes(traceId);
 
             httpContext.Request.Headers.Add(traceName, traceId);
             httpContext.Response.Headers.Add(traceName, traceId);
@@ -49,6 +50,11 @@ namespace elando.ELK.TraceLogging.Extensions
         }
 
         #region Privates
+        private static string RemoveDashes(string traceId)
+        {
+            return traceId.Replace("-", "");
+        }
+
         /// <summary>
         /// Adds UserId based on Authorization token.
         /// </summary>
