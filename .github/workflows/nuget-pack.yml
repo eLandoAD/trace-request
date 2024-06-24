@@ -19,12 +19,14 @@ jobs:
         dotnet-version: |
           6.0.x
           7.0.x
+          8.0.x
 
-    - name: Build and publish NuGet package
-      run: |
-        ls
-        dotnet build elando.ELK.TraceLogging.csproj -c Release
-        dotnet pack elando.ELK.TraceLogging.csproj -c Release --no-build --output ./nupkg
+    - name: Build 
+      run:  dotnet build elando.ELK.TraceLogging.csproj -c Release
+    - name: Show runtime tree
+      run:  ls /usr/share/dotnet/
+    - name: Publish NuGet package
+      run:  dotnet pack elando.ELK.TraceLogging.csproj -c Release --no-build --output ./nupkg
 
     - name: Publish to NuGet.org
       run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGETAPIKEYKNEV }}
