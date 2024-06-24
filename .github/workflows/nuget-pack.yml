@@ -23,6 +23,7 @@ jobs:
 
     - name: Build and publish NuGet package
       run: |
+        ls
         dotnet build elando.ELK.TraceLogging.csproj -c Release
         dotnet pack elando.ELK.TraceLogging.csproj -c Release --no-build --output ./nupkg
 
