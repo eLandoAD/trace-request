@@ -12,17 +12,12 @@
 		<IncludeContentInPack>true</IncludeContentInPack>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
-        <ItemGroup>
-		<None Update="License.md">
-			<Pack>True</Pack>
-		        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="README.md">
-			<Pack>True</Pack> 
-                        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
+
+	<ItemGroup>
+		<None Include="$(SolutionDir)License.md" Pack="true" PackagePath="" />
+		<None Include="$(SolutionDir)README.md" Pack="true" PackagePath="" />
 	</ItemGroup>
-     
+
 	<ItemGroup>
 		<PackageReference Include="Google.Protobuf" Version="3.24.3" />
 		<PackageReference Include="Grpc.Core.Api" Version="2.57.0" />
@@ -62,5 +57,5 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
-	
+
 </Project>
