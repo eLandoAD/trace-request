@@ -13,6 +13,13 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
+       <ItemGroup>
+		 <None Update="LICENSE.md"> <!-- Ensure file name consistency -->
+		      <Pack>true</Pack> <!-- Ensure it is included in the package -->
+		      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+       </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Google.Protobuf" Version="3.24.3" />
 		<PackageReference Include="Grpc.Core.Api" Version="2.57.0" />
