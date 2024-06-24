@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Title>elando.ELK.TraceLogging</Title>
@@ -12,14 +12,17 @@
 		<IncludeContentInPack>true</IncludeContentInPack>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
-
-       <ItemGroup>
-		 <None Update="License.md">  
-		      <Pack>true</Pack> 
-		      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <ItemGroup>
+		<None Update="License.md">
+			<Pack>True</Pack>
+		        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-       </ItemGroup>
-
+		<None Update="README.md">
+			<Pack>True</Pack> 
+                        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+     
 	<ItemGroup>
 		<PackageReference Include="Google.Protobuf" Version="3.24.3" />
 		<PackageReference Include="Grpc.Core.Api" Version="2.57.0" />
@@ -59,15 +62,5 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="License.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Update="README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
+	
 </Project>
