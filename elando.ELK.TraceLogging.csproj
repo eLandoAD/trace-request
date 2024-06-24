@@ -14,8 +14,8 @@
 	</PropertyGroup>
 
        <ItemGroup>
-		 <None Update="LICENSE.md"> <!-- Ensure file name consistency -->
-		      <Pack>true</Pack> <!-- Ensure it is included in the package -->
+		 <None Update="License.md">  
+		      <Pack>true</Pack> 
 		      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
        </ItemGroup>
