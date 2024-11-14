@@ -27,4 +27,4 @@ jobs:
         dotnet pack elando.ELK.TraceLogging.csproj -c Release --no-build --output ./nupkg
 
     - name: Publish to NuGet.org
-      run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGETAPIKEYKNEV }}
+      run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.REPONUGETAPIKEYKNEV }}
