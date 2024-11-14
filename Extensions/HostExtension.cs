@@ -12,7 +12,7 @@ namespace elando.ELK.TraceLogging.Extensions
     public static class HostExtension
     {
         /// <summary>
-        /// Extensions to config the Serrilog and Elstic Search
+        /// Extensions to config the Serrilog and ElasticSearch
         /// </summary>
         /// <param name="host"></param>
         /// <param name="configuration"></param>
@@ -35,12 +35,52 @@ namespace elando.ELK.TraceLogging.Extensions
                             .Enrich.FromLogContext()
                             .WriteTo.Console(levelSwitch: new LoggingLevelSwitch(logLevel))
                             .WriteTo.Logger(loggerConfig =>
-                                loggerConfig
-                                    .AddElasticLogging(
-                                        elasticUri: elasticUri,
-                                        indexPrefix: indexPrefix,
-                                        minLoggingLevel: logLevel,
-                                        configuration: configuration));
+                                loggerConfig.AddElasticLogging(
+                                                        elasticUri: elasticUri,
+                                                        indexPrefix: indexPrefix,
+                                                        minLoggingLevel: logLevel,
+                                                        configuration: configuration));
+            });
+        }
+
+        /// <summary>
+        ///  Extensions to config the Sentry into Serrilog and ElasticSearch
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="configuration"></param>
+        /// <param name="assemblyName"></param>
+        /// <param name="logLevel"></param>
+        /// <param name="minimumBreadcrumbLevel"></param>
+        /// <param name="minimumEventLevel"></param>
+        public static void AddSerilogLoggerWithSentry(
+           this IHostBuilder host,
+           IConfiguration configuration,
+           string assemblyName,
+           LogEventLevel logLevel = LogEventLevel.Information,
+           LogEventLevel minimumBreadcrumbLevel = LogEventLevel.Debug,
+           LogEventLevel minimumEventLevel = LogEventLevel.Warning
+            )
+        {
+            var prefix = configuration.GetPrefix();
+            var indexPrefix = FormatLogIndex(prefix, assemblyName);
+            var elasticUri = configuration.GetElasticUriUri();
+
+            host.UseSerilog((hostContext, services, _configuration) =>
+            {
+                _configuration
+                            .ReadFrom.Configuration(configuration)
+                            .Enrich.FromLogContext()
+                            .WriteTo.Console(levelSwitch: new LoggingLevelSwitch(logLevel))
+                            .WriteTo.Logger(loggerConfig =>
+                                loggerConfig.AddElasticLogging(
+                                                        elasticUri: elasticUri,
+                                                        indexPrefix: indexPrefix,
+                                                        minLoggingLevel: logLevel,
+                                                        configuration: configuration))
+                            .WriteTo.Sentry(o => o.AddSentryLogging(
+                                minimumBreadcrumbLevel: minimumBreadcrumbLevel,
+                                minimumEventLevel: minimumEventLevel,
+                                configuration: configuration));
             });
         }
 

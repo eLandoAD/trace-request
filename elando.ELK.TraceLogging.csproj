@@ -7,7 +7,7 @@
 		<Description>Trace logging in to microservices with custom Http Header</Description>
 		<Copyright>own license</Copyright>
 		<PackageTags>Logging Trace</PackageTags>
-		<Version>1.6.0</Version>
+		<Version>2.0.0</Version>
 		<PackageLicenseFile>License.md</PackageLicenseFile>
 		<IncludeContentInPack>true</IncludeContentInPack>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -22,13 +22,14 @@
 		<PackageReference Include="Google.Protobuf" Version="3.24.3" />
 		<PackageReference Include="Grpc.Core.Api" Version="2.57.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
-		<PackageReference Include="Serilog" Version="3.0.1" />
+		<PackageReference Include="Sentry.Serilog" Version="4.13.0" />
+		<PackageReference Include="Serilog" Version="4.1.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
-		<PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
-		<PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />
-		<PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+		<PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Thread" Version="3.0.0" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" /> 
 		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
 		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.19.0" />
