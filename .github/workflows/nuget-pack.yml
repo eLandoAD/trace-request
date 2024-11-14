@@ -2,6 +2,7 @@ name: Publish NuGet Package
 
 on:
   pull_request:
+    types: [closed]
     branches: ["main"]
     
   workflow_dispatch:
