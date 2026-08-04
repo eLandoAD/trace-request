@@ -4,26 +4,30 @@ on:
   pull_request:
     types: [closed]
     branches: ["main"]
-    
+
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    # `types: [closed]` fires whether or not the PR was merged, so without this guard abandoning a
+    # pull request would publish a package. Manual dispatch stays allowed.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v7
 
+    # The .NET 10 SDK builds net8.0 as well, so one SDK covers both target frameworks.
+    # Previously pinned to 6.0.x/7.0.x, which cannot build the current targets at all.
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v6
       with:
-        dotnet-version: |
-          6.0.x
-          7.0.x
+        dotnet-version: 10.0.x
 
     - name: Build and publish NuGet package
       run: |
-        ls
         dotnet build elando.ELK.TraceLogging.csproj -c Release
         dotnet pack elando.ELK.TraceLogging.csproj -c Release --no-build --output ./nupkg
 
