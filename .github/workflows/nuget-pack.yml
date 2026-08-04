@@ -6,10 +6,21 @@ on:
     branches: ["main"]
 
   workflow_dispatch:
+    inputs:
+      also_publish_to_nuget_org:
+        description: "Also push to nuget.org (needs a valid REPONUGETAPIKEYKNEV)"
+        type: boolean
+        default: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    # GITHUB_TOKEN needs packages:write to push to the org feed. Matches Euroins.Contracts
+    # and AspireServiceDefaults, which publish the same way.
+    permissions:
+      contents: read
+      packages: write
 
     # `types: [closed]` fires whether or not the PR was merged, so without this guard abandoning a
     # pull request would publish a package. Manual dispatch stays allowed.
@@ -20,16 +31,25 @@ jobs:
       uses: actions/checkout@v7
 
     # The .NET 10 SDK builds net8.0 as well, so one SDK covers both target frameworks.
-    # Previously pinned to 6.0.x/7.0.x, which cannot build the current targets at all.
     - name: Setup .NET
       uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.x
 
-    - name: Build and publish NuGet package
+    - name: Build and pack
       run: |
         dotnet build elando.ELK.TraceLogging.csproj -c Release
         dotnet pack elando.ELK.TraceLogging.csproj -c Release --no-build --output ./nupkg
 
+    # Primary target. Uses the built-in GITHUB_TOKEN, so publishing no longer depends on one
+    # person's personal nuget.org API key. --skip-duplicate makes re-runs idempotent, since
+    # GitHub Packages refuses to overwrite an existing version.
+    - name: Publish to GitHub Packages
+      run: dotnet nuget push ./nupkg/*.nupkg --source https://nuget.pkg.github.com/eLandoAD/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+
+    # Opt-in only. Publishing the SAME version to two feeds makes restores non-deterministic, so
+    # this is deliberately off by default - see the note in README/PR description. It also needs a
+    # live nuget.org key, which only the package owner can mint.
     - name: Publish to NuGet.org
-      run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.REPONUGETAPIKEYKNEV }}
+      if: github.event_name == 'workflow_dispatch' && inputs.also_publish_to_nuget_org
+      run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.REPONUGETAPIKEYKNEV }} --skip-duplicate

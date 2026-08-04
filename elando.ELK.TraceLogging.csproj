@@ -18,6 +18,12 @@
 		<Copyright>own license</Copyright>
 		<PackageTags>Logging Trace</PackageTags>
 		<Version>10.0.0</Version>
+		<!--
+			GitHub Packages uses RepositoryUrl to link the published package to its repository, and
+			the other eLandoAD libraries (Euroins.Contracts, Euroins.ServiceDefaults) all declare it.
+		-->
+		<RepositoryUrl>https://github.com/eLandoAD/trace-request</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
 		<PackageLicenseFile>License.md</PackageLicenseFile>
 		<IncludeContentInPack>true</IncludeContentInPack>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
