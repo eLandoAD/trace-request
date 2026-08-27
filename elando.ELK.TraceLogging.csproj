@@ -17,7 +17,13 @@
 		<Description>Trace logging in to microservices with custom Http Header</Description>
 		<Copyright>own license</Copyright>
 		<PackageTags>Logging Trace</PackageTags>
-		<Version>10.0.0</Version>
+		<!--
+			10.0.1 - logging serialization no longer throws when a property getter throws.
+			Grpc.Core.Metadata.Entry.Value throws for binary (-bin) entries by design and gRPC always
+			sends grpc-status-details-bin in trailers, so serializing any RpcException used to fail and
+			the resulting JsonSerializationException replaced the real error in the log.
+		-->
+		<Version>10.0.1</Version>
 		<!--
 			GitHub Packages uses RepositoryUrl to link the published package to its repository, and
 			the other eLandoAD libraries (Euroins.Contracts, Euroins.ServiceDefaults) all declare it.
