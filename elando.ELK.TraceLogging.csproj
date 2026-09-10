@@ -22,8 +22,13 @@
 			Grpc.Core.Metadata.Entry.Value throws for binary (-bin) entries by design and gRPC always
 			sends grpc-status-details-bin in trailers, so serializing any RpcException used to fail and
 			the resulting JsonSerializationException replaced the real error in the log.
+
+			10.0.2 - off Serilog.Sinks.Elasticsearch and onto Elastic.Ingest.Elasticsearch. The old
+			package pinned Elasticsearch.Net 7.17.5, a client a full major behind the 8.x servers, and
+			registered templates through the Elasticsearch 6 legacy _template API. Document shape,
+			index names and bulk action are unchanged, so this is a drop-in for consumers.
 		-->
-		<Version>10.0.1</Version>
+		<Version>10.0.2</Version>
 		<!--
 			GitHub Packages uses RepositoryUrl to link the published package to its repository, and
 			the other eLandoAD libraries (Euroins.Contracts, Euroins.ServiceDefaults) all declare it.
@@ -38,6 +43,17 @@
 	<ItemGroup>
 		<None Include="$(SolutionDir)License.md" Pack="true" PackagePath="" />
 		<None Include="$(SolutionDir)README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+	<!--
+		This project sits at the repository root, so the SDK's default globs would compile the test
+		project's sources into the library itself - which fails with the test attributes unresolved
+		and would ship test code in the package.
+	-->
+	<ItemGroup>
+		<Compile Remove="tests/**" />
+		<None Remove="tests/**" />
+		<EmbeddedResource Remove="tests/**" />
 	</ItemGroup>
 
 	<!--
@@ -59,7 +75,14 @@
 		<PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="10.0.1" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
-		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
+		<!--
+			Replaces Serilog.Sinks.Elasticsearch 10.0.0, whose Elasticsearch.Net 7.17.5 dependency is a
+			7.x client. This is the ingest layer underneath the official Elastic.Serilog.Sinks; that
+			sink itself is not used because it can only write to data streams, which would rename
+			every euroins-* index and break the legacy_writer role allow-list. Apache-2.0, as is its
+			Elastic.Transport / Elastic.Channels / Elastic.Mapping closure.
+		-->
+		<PackageReference Include="Elastic.Ingest.Elasticsearch" Version="0.51.1" />
 		<!--
 			6.19.0 was vulnerable to GHSA-59j7-ghrg-fj52 (DoS). The 6.x line is patched from 6.34.0;
 			8.x also clears it and is the supported line. Safe here because the only API used is

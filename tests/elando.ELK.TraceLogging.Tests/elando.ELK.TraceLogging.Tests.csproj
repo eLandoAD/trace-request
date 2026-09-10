@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="xunit" Version="2.9.3" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.0" />
+		<!--
+			The package the library just stopped using, kept here as a TEST ORACLE only: these tests
+			assert that the new sink emits byte-identical documents to the formatter this package
+			shipped, which is what makes 10.0.2 a drop-in for Kibana. It is not referenced by the
+			library and is never packed. Delete it once the equivalence no longer needs proving.
+		-->
+		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\elando.ELK.TraceLogging.csproj" />
+	</ItemGroup>
+
+	<!--
+		Plain xUnit assertions, no FluentAssertions: 8.x moved to a commercial licence and the 7.x
+		ceiling is a trap worth simply not laying in a brand new project.
+	-->
+
+</Project>

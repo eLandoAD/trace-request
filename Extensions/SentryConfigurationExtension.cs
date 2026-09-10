@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Serilog.Core;
 using Serilog.Events;
-using Serilog.Sinks.Elasticsearch;
 using Serilog;
 using Sentry.Serilog;
 
