@@ -59,6 +59,36 @@ namespace elando.ELK.TraceLogging.Tests
         }
 
         [Fact]
+        public async Task Batches_are_capped_at_fifty_documents()
+        {
+            using var elasticsearch = new FakeElasticsearch();
+
+            using (var logger = new LoggerConfiguration()
+                       .MinimumLevel.Verbose()
+                       .WriteTo.Sink(new ElasticsearchIndexSink(elasticsearch.Uri.ToString(), "euroins-health-api"))
+                       .CreateLogger())
+            {
+                for (var i = 0; i < 120; i++) logger.Information("Event {Index}", i);
+            }
+
+            await elasticsearch.WaitForDocumentsAsync(120, Timeout);
+
+            // 50 is the batch size the previous sink used (BatchPostingLimit). It is pinned rather
+            // than left at this library's default of 1000 so that a SIGKILL - services here are
+            // routinely OOMKilled - can only lose a small batch. If someone drops the explicit
+            // BufferOptions, this fails.
+            var documentsPerRequest = elasticsearch.Requests
+                .Select(r => r.Body.Split('\n', StringSplitOptions.RemoveEmptyEntries).Length / 2)
+                .Where(count => count > 0)
+                .ToList();
+
+            Assert.All(documentsPerRequest, count => Assert.InRange(count, 1, 50));
+            Assert.True(documentsPerRequest.Count >= 3,
+                $"120 events capped at 50 should need at least 3 requests, got {documentsPerRequest.Count}: [{string.Join(", ", documentsPerRequest)}]");
+            Assert.Equal(120, documentsPerRequest.Sum());
+        }
+
+        [Fact]
         public async Task Bulk_response_is_filtered_down_to_the_fields_the_client_needs()
         {
             using var elasticsearch = new FakeElasticsearch();

@@ -52,6 +52,26 @@ namespace elando.ELK.TraceLogging.Tests
             throw new TimeoutException($"No request matching '{pathFragment}' within {timeout}. Saw: [{seen}]");
         }
 
+        /// <summary>
+        /// Number of NDJSON documents received across every bulk request (each document is preceded
+        /// by an action line, so the line count is twice the document count).
+        /// </summary>
+        public int TotalDocuments
+            => Requests.Sum(r => r.Body.Split('\n', StringSplitOptions.RemoveEmptyEntries).Length / 2);
+
+        /// <summary>Waits until <paramref name="count"/> documents have arrived in total.</summary>
+        public async Task WaitForDocumentsAsync(int count, TimeSpan timeout)
+        {
+            var deadline = DateTime.UtcNow + timeout;
+            while (DateTime.UtcNow < deadline)
+            {
+                if (TotalDocuments >= count) return;
+                await Task.Delay(25);
+            }
+
+            throw new TimeoutException($"Only {TotalDocuments} of {count} documents arrived within {timeout}.");
+        }
+
         private async Task AcceptLoopAsync()
         {
             while (!_cts.IsCancellationRequested)

@@ -68,6 +68,20 @@ namespace elando.ELK.TraceLogging.Sinks
                 EventWriter = new LogEventWriter(),
                 BufferOptions = new BufferOptions
                 {
+                    // Batch size and flush interval are pinned to the values the old sink used
+                    // (ElasticsearchSinkOptions.BatchPostingLimit = 50, Period = 2s) rather than
+                    // this library's defaults of 1000 / 5s.
+                    //
+                    // Not for throughput - at either setting this is a handful of requests a minute
+                    // to an in-cluster service. It is about what a batch loses when the process is
+                    // killed: a buffered batch is gone on SIGKILL, with no flush and no drain, and
+                    // several services are routinely OOMKilled. The larger default would widen that
+                    // loss window from 2s/50 events to 5s/1000 - discarding exactly the lines
+                    // written in the seconds before the container died, which are the ones needed to
+                    // explain why it died.
+                    OutboundBufferMaxSize = 50,
+                    OutboundBufferMaxLifetime = TimeSpan.FromSeconds(2),
+
                     // The library default is 100_000 events. Several services run under a 256Mi
                     // memory limit and already sit close to it, so a burst of logging must not be
                     // able to add ~100MB of retained LogEvents on top.
